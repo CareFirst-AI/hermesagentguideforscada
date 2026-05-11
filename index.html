@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hermes Agent — Complete Beginner's Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e29;
+    --border: #252a38;
+    --accent: #e8b84b;
+    --accent2: #5b8dee;
+    --accent3: #4ecdc4;
+    --danger: #ff6b6b;
+    --success: #69db7c;
+    --text: #e4e8f0;
+    --muted: #7a8299;
+    --heading: #f0f4ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lora', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.8;
+    overflow-x: hidden;
+  }
+
+  /* — NOISE OVERLAY — */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.35;
+  }
+
+  /* — HERO — */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px 24px;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(232,184,75,0.12) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    animation: pulse 6s ease-in-out infinite;
+  }
+
+  .hero::after {
+    content: '';
+    position: absolute;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(91,141,238,0.1) 0%, transparent 70%);
+    top: 30%; right: 10%;
+    animation: pulse 8s ease-in-out infinite reverse;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: translate(-50%,-50%) scale(1); opacity: 0.8; }
+    50% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: rgba(232,184,75,0.12);
+    border: 1px solid rgba(232,184,75,0.35);
+    color: var(--accent);
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(42px, 8vw, 92px);
+    font-weight: 800;
+    color: var(--heading);
+    line-height: 1.05;
+    letter-spacing: -2px;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 0.9s ease both 0.1s;
+  }
+
+  .hero h1 span {
+    background: linear-gradient(135deg, var(--accent), #f5d78e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    margin-top: 20px;
+    font-size: 19px;
+    color: var(--muted);
+    max-width: 560px;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 1s ease both 0.2s;
+  }
+
+  .hero-tags {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 36px;
+    position: relative;
+    z-index: 2;
+    animation: fadeDown 1s ease both 0.3s;
+  }
+
+  .hero-tags span {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: bounce 2s ease infinite;
+    z-index: 2;
+  }
+
+  .scroll-hint svg { width: 20px; height: 20px; }
+
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(8px)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* — NAV — */
+  .toc {
+    position: sticky;
+    top: 0;
+    background: rgba(13,15,20,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    z-index: 100;
+    padding: 0 24px;
+    overflow-x: auto;
+  }
+
+  .toc-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 0;
+    align-items: center;
+  }
+
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    padding: 16px 18px;
+    white-space: nowrap;
+    transition: color 0.2s, border-color 0.2s;
+    border-bottom: 2px solid transparent;
+    display: block;
+  }
+
+  .toc a:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* — MAIN LAYOUT — */
+  .container {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* — SECTIONS — */
+  .section {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .section h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 800;
+    color: var(--heading);
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 32px;
+  }
+
+  .section p { margin-bottom: 20px; color: var(--text); }
+
+  /* — CARDS — */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .card:hover { border-color: rgba(232,184,75,0.3); transform: translateY(-2px); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--heading);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .card-title .emoji { font-size: 22px; }
+
+  /* — STEP CARDS — */
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 16px 16px 0;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .step-number {
+    position: absolute;
+    top: -14px;
+    left: 24px;
+    background: var(--accent);
+    color: #000;
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    letter-spacing: 1px;
+  }
+
+  .step h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 12px;
+    margin-top: 8px;
+  }
+
+  /* — CODE BLOCKS — */
+  .code-block {
+    background: #090b10;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 16px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 13.5px;
+    line-height: 1.7;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block::before {
+    content: attr(data-lang);
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .code-block .cmd { color: var(--accent); }
+  .code-block .comment { color: var(--muted); font-style: italic; }
+  .code-block .str { color: var(--accent3); }
+  .code-block .kw { color: var(--accent2); }
+  .code-block .var { color: #e29cd2; }
+
+  /* — COPY BUTTON — */
+  .code-wrap { position: relative; }
+
+  .copy-btn {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .copy-btn:hover { background: var(--accent); color: #000; border-color: var(--accent); }
+
+  /* — WARNING / TIP / SUCCESS BOXES — */
+  .box {
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    font-size: 15px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .box-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+
+  .box.warn {
+    background: rgba(255,107,107,0.08);
+    border: 1px solid rgba(255,107,107,0.3);
+    color: #ffb3b3;
+  }
+
+  .box.tip {
+    background: rgba(78,205,196,0.08);
+    border: 1px solid rgba(78,205,196,0.3);
+    color: #a8f0ed;
+  }
+
+  .box.info {
+    background: rgba(91,141,238,0.08);
+    border: 1px solid rgba(91,141,238,0.3);
+    color: #b3c8ff;
+  }
+
+  .box.success {
+    background: rgba(105,219,124,0.08);
+    border: 1px solid rgba(105,219,124,0.3);
+    color: #b5f5c2;
+  }
+
+  /* — REQUIREMENTS TABLE — */
+  .req-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  @media (max-width: 620px) { .req-grid { grid-template-columns: 1fr; } }
+
+  .req-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    transition: border-color 0.2s;
+  }
+
+  .req-item:hover { border-color: var(--accent2); }
+  .req-icon { font-size: 28px; flex-shrink: 0; }
+
+  .req-item h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--heading);
+    margin-bottom: 4px;
+  }
+
+  .req-item p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  .req-item a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+  }
+
+  .req-item a:hover { text-decoration: underline; }
+
+  /* — FEATURES GRID — */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  @media (max-width: 620px) { .features-grid { grid-template-columns: 1fr; } }
+
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: all 0.3s;
+  }
+
+  .feature-card:hover {
+    border-color: var(--accent3);
+    box-shadow: 0 0 24px rgba(78,205,196,0.08);
+    transform: translateY(-3px);
+  }
+
+  .feature-card .fi { font-size: 32px; margin-bottom: 12px; display: block; }
+
+  .feature-card h4 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--heading);
+    margin-bottom: 8px;
+  }
+
+  .feature-card p { font-size: 14px; color: var(--muted); margin: 0; }
+
+  /* — TROUBLESHOOTING — */
+  .trouble-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .trouble-q {
+    padding: 18px 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    color: var(--heading);
+    font-size: 15px;
+  }
+
+  .trouble-q:hover { background: var(--surface2); }
+  .trouble-q .tq-icon { color: var(--danger); font-size: 18px; flex-shrink: 0; }
+  .trouble-q .arrow { color: var(--muted); font-size: 12px; transition: transform 0.3s; }
+  .trouble-item.open .arrow { transform: rotate(180deg); }
+
+  .trouble-a {
+    display: none;
+    padding: 0 24px 20px;
+    color: var(--muted);
+    font-size: 15px;
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+
+  .trouble-item.open .trouble-a { display: block; }
+
+  /* — INLINE CODE — */
+  code {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 7px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85em;
+    color: var(--accent3);
+  }
+
+  /* — LINKS — */
+  a { color: var(--accent2); }
+
+  /* — PROGRESS TRACKER — */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    z-index: 200;
+    transition: width 0.1s;
+    width: 0%;
+  }
+
+  /* — FOOTER — */
+  footer {
+    text-align: center;
+    padding: 60px 24px;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* — UTILS — */
+  ul { padding-left: 22px; }
+  ul li { margin-bottom: 8px; color: var(--text); }
+  strong { color: var(--heading); }
+  em { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .tag {
+    display: inline-block;
+    background: rgba(91,141,238,0.15);
+    border: 1px solid rgba(91,141,238,0.3);
+    color: var(--accent2);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 100px;
+    margin: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 32px 0;
+  }
+
+  .big-emoji {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 16px;
+  }
+
+  /* Subtle grid bg */
+  .section:nth-child(odd) {
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 49px,
+      rgba(255,255,255,0.01) 49px,
+      rgba(255,255,255,0.01) 50px
+    );
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🪄 Complete Beginner's Guide · 2025</div>
+  <h1>Build Your<br><span>Hermes Agent</span></h1>
+  <p class="hero-sub">From absolute zero to a fully running AI agent — no coding experience needed. We've got you! 💪</p>
+  <div class="hero-tags">
+    <span>🤖 AI Agent</span>
+    <span>📋 Step-by-Step</span>
+    <span>🛡️ Beginner Safe</span>
+    <span>🔧 Free Tools</span>
+    <span>🚀 SCADA-Ready</span>
+  </div>
+  <div class="scroll-hint">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    scroll to start
+  </div>
+</section>
+
+<!-- TABLE OF CONTENTS -->
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#what-is">01 · What Is It?</a>
+    <a href="#requirements">02 · Requirements</a>
+    <a href="#setup">03 · Setup Steps</a>
+    <a href="#features">04 · Cool Features</a>
+    <a href="#troubleshoot">05 · Troubleshooting</a>
+  </div>
+</nav>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 1 — WHAT IS A HERMES AGENT        -->
+<!-- ─────────────────────────────────────────── -->
+<section id="what-is" class="section">
+  <div class="container">
+    <div class="section-label">Section 01</div>
+    <h2>What Is a Hermes Agent? 🤔</h2>
+
+    <p><strong>Think of Hermes Agent like a super-smart personal assistant</strong> — but instead of a human, it's a piece of software powered by Artificial Intelligence (AI). It can read emails for you, answer questions, automate repetitive tasks, browse the web, send messages, and even write reports — all by itself.</p>
+
+    <p>The name "Hermes" comes from the Greek messenger god ⚡ — because this agent is all about <em>communication, speed, and delivering information</em> between you and the digital world.</p>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧠</span> How Does It Work? (Simple Version)</div>
+      <p>You give it a goal — like "check my email and summarize important messages." The agent uses a <strong>Large Language Model (LLM)</strong> — basically a very powerful AI brain (like ChatGPT) — to understand your instructions and figure out what steps to take. Then it connects to tools (like your email, calendar, web browser) to actually <em>do</em> those steps automatically.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🏭</span> Why Is It Useful for SCADA / Industrial Engineers?</div>
+      <ul>
+        <li>📊 <strong>Automate alarm reports</strong> — automatically summarize daily SCADA alarms into readable reports</li>
+        <li>📧 <strong>Email notifications</strong> — send alert emails when critical conditions are met</li>
+        <li>📋 <strong>Data collection</strong> — pull data from OPC-UA, Modbus, or REST APIs and organize it</li>
+        <li>📆 <strong>Shift handover logs</strong> — auto-generate shift reports from sensor data</li>
+        <li>🔍 <strong>Maintenance scheduling</strong> — monitor equipment hours and suggest PM tasks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><span class="emoji">🧩</span> The Building Blocks of Hermes Agent</div>
+      <ul>
+        <li>🧠 <strong>LLM Brain</strong> — Claude, GPT-4, or an open-source model like Mistral/Hermes 3</li>
+        <li>🔧 <strong>Tools</strong> — web search, file reading, email, calculator, database queries</li>
+        <li>💾 <strong>Memory</strong> — ability to remember past conversations or data</li>
+        <li>🔁 <strong>Loop</strong> — the agent keeps working until the task is done (Reason → Act → Observe loop)</li>
+      </ul>
+    </div>
+
+    <div class="box tip">
+      <span class="box-icon">💡</span>
+      <div><strong>Fun fact!</strong> Hermes 3 is a popular open-source AI model trained by NousResearch specifically to be excellent at "agentic tasks" — meaning it's great at planning, tool use, and following instructions step by step. You'll be using it as the "brain" of your agent!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 2 — REQUIREMENTS                   -->
+<!-- ─────────────────────────────────────────── -->
+<section id="requirements" class="section">
+  <div class="container">
+    <div class="section-label">Section 02</div>
+    <h2>What You Will Need 🧰</h2>
+
+    <p>Don't worry — most of these are <strong>completely free</strong>! Let's gather everything before we start building. Think of this like laying out all your tools before fixing a machine. 🔩</p>
+
+    <div class="req-grid">
+
+      <div class="req-item">
+        <div class="req-icon">💻</div>
+        <div>
+          <h4>A Computer</h4>
+          <p>Windows 10/11, macOS, or Linux. At least 8GB RAM recommended. Your SCADA workstation will work perfectly!</p>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">🐍</div>
+        <div>
+          <h4>Python 3.10+</h4>
+          <p>The programming language we'll use. Free download.</p>
+          <a href="https://www.python.org/downloads/" target="_blank">→ python.org/downloads</a>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">📦</div>
+        <div>
+          <h4>pip (Package Manager)</h4>
+          <p>Comes automatically with Python. Used to install extra tools we need.</p>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">🐙</div>
+        <div>
+          <h4>Git (Optional but Recommended)</h4>
+          <p>Version control tool. Free download.</p>
+          <a href="https://git-scm.com/downloads" target="_blank">→ git-scm.com/downloads</a>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">✍️</div>
+        <div>
+          <h4>VS Code (Text Editor)</h4>
+          <p>Free code editor from Microsoft. Very beginner-friendly.</p>
+          <a href="https://code.visualstudio.com/" target="_blank">→ code.visualstudio.com</a>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">🔑</div>
+        <div>
+          <h4>API Key (LLM Access)</h4>
+          <p>Free tier available from multiple providers. We'll use Ollama (100% free, runs locally).</p>
+          <a href="https://ollama.ai" target="_blank">→ ollama.ai</a>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">🌐</div>
+        <div>
+          <h4>Internet Connection</h4>
+          <p>Required for downloading tools and models. After setup, can run offline.</p>
+        </div>
+      </div>
+
+      <div class="req-item">
+        <div class="req-icon">🕒</div>
+        <div>
+          <h4>About 2–3 Hours</h4>
+          <p>Take breaks, don't rush! Every engineer was a beginner once. You've got this! 💪</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="box info">
+      <span class="box-icon">ℹ️</span>
+      <div><strong>Which AI model are we using?</strong> We'll use <strong>Ollama + Hermes 3</strong> — this runs entirely on your own computer, completely free, no API keys needed, and no data leaves your machine. Perfect for industrial/SCADA environments where data privacy matters!</div>
+    </div>
+
+    <div class="box warn">
+      <span class="box-icon">⚠️</span>
+      <div><strong>Admin rights needed!</strong> Make sure you have administrator rights on your computer before starting. On corporate SCADA networks, you may need to ask your IT department first.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 3 — STEP BY STEP SETUP             -->
+<!-- ─────────────────────────────────────────── -->
+<section id="setup" class="section">
+  <div class="container">
+    <div class="section-label">Section 03</div>
+    <h2>Step-by-Step Setup Instructions 🚀</h2>
+    <p>Follow each step carefully. Don't skip any! Think of this like commissioning a new PLC — every step matters and they must be done in order.</p>
+
+    <!-- STEP 1 -->
+    <div class="step">
+      <div class="step-number">STEP 01</div>
+      <h3>🐍 Install Python on Your Computer</h3>
+      <p><strong>What are we doing?</strong> Python is like the "operating system" for our agent. Everything else runs on top of it.</p>
+      <p><strong>Why?</strong> The Hermes Agent is written in Python, so we need it installed first.</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>Open your web browser and go to <strong><a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a></strong></li>
+        <li>Click the big yellow <strong>"Download Python 3.x.x"</strong> button</li>
+        <li>Run the downloaded file (.exe on Windows)</li>
+        <li>⚠️ <strong>VERY IMPORTANT:</strong> On the first screen, check the box that says <strong>"Add Python to PATH"</strong> at the bottom — DO NOT skip this!</li>
+        <li>Click <strong>"Install Now"</strong> and wait for it to finish</li>
+        <li>Click <strong>"Close"</strong> when done</li>
+      </ol>
+      <p><strong>✅ Verify it worked:</strong> Open Command Prompt (search "cmd" in Windows Start menu) and type:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="cmd">python --version</span>
+<span class="comment"># You should see something like: Python 3.11.5</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="box warn">
+        <span class="box-icon">⚠️</span>
+        <div>If you see <code>'python' is not recognized</code> — you forgot to check "Add Python to PATH". Uninstall Python and redo step 4!</div>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step">
+      <div class="step-number">STEP 02</div>
+      <h3>📥 Install VS Code (Your Code Editor)</h3>
+      <p><strong>What are we doing?</strong> Installing a text editor where we'll write and manage our agent's code files.</p>
+      <p><strong>Why?</strong> Regular Notepad won't work well — VS Code gives us colors, error highlighting, and a built-in terminal.</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>Go to <strong><a href="https://code.visualstudio.com/" target="_blank">code.visualstudio.com</a></strong></li>
+        <li>Click the big <strong>"Download for Windows"</strong> button (or Mac/Linux if applicable)</li>
+        <li>Run the installer and accept all defaults — click "Next" through everything</li>
+        <li>After installation, open VS Code</li>
+        <li>Install the <strong>Python extension</strong>: Click the puzzle-piece icon on the left sidebar, search "Python", click Install on the one by Microsoft</li>
+      </ol>
+      <div class="box tip">
+        <span class="box-icon">💡</span>
+        <div>VS Code is free and used by millions of engineers worldwide. You'll love it once you get used to it!</div>
+      </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="step">
+      <div class="step-number">STEP 03</div>
+      <h3>🦙 Install Ollama (Your Local AI Engine)</h3>
+      <p><strong>What are we doing?</strong> Installing Ollama — a free tool that lets you run powerful AI models like Hermes 3 entirely on your own computer.</p>
+      <p><strong>Why?</strong> This means no subscription, no API costs, and your data never leaves your machine — critical for SCADA environments!</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>Go to <strong><a href="https://ollama.ai" target="_blank">ollama.ai</a></strong></li>
+        <li>Click <strong>"Download"</strong> for your operating system</li>
+        <li>Run the installer — it's simple, just keep clicking Next/Install</li>
+        <li>After installation, Ollama runs quietly in the background (you'll see a llama 🦙 icon in the system tray)</li>
+      </ol>
+      <p><strong>Now download the Hermes 3 model.</strong> Open Command Prompt and type:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="cmd">ollama pull hermes3</span>
+<span class="comment"># This downloads the Hermes 3 AI model (~4.5 GB)</span>
+<span class="comment"># It will take 5-15 minutes depending on your internet speed</span>
+<span class="comment"># You'll see a progress bar — be patient! ☕</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>Once downloaded, test it works:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="cmd">ollama run hermes3</span>
+<span class="comment"># The AI will start! Type "Hello!" and press Enter</span>
+<span class="comment"># To exit, type /bye and press Enter</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="box success">
+        <span class="box-icon">✅</span>
+        <div>If Hermes 3 replies to "Hello!" — congratulations! You now have a fully local AI running on your machine! 🎉</div>
+      </div>
+    </div>
+
+    <!-- STEP 4 -->
+    <div class="step">
+      <div class="step-number">STEP 04</div>
+      <h3>📁 Create Your Project Folder</h3>
+      <p><strong>What are we doing?</strong> Setting up a dedicated folder for all our Hermes Agent files — like creating a new panel folder in your SCADA system.</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>Open VS Code</li>
+        <li>Go to <strong>File → Open Folder</strong></li>
+        <li>Navigate to your Documents folder, create a new folder named <strong>hermes-agent</strong>, then click "Select Folder"</li>
+        <li>VS Code will ask if you trust this folder — click <strong>"Yes, I trust the authors"</strong></li>
+      </ol>
+      <p>Now open the built-in terminal in VS Code: go to <strong>Terminal → New Terminal</strong> from the top menu.</p>
+      <div class="box tip">
+        <span class="box-icon">💡</span>
+        <div>The terminal inside VS Code works exactly like Command Prompt, but it automatically starts inside your project folder. Very convenient!</div>
+      </div>
+    </div>
+
+    <!-- STEP 5 -->
+    <div class="step">
+      <div class="step-number">STEP 05</div>
+      <h3>🏗️ Create a Virtual Environment</h3>
+      <p><strong>What are we doing?</strong> Creating an isolated Python "bubble" for our project — like a dedicated VLAN in networking.</p>
+      <p><strong>Why?</strong> This keeps our project's tools separate from other Python programs on your computer, preventing conflicts.</p>
+      <p>In the VS Code terminal, type:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="cmd">python -m venv venv</span>
+<span class="comment"># Creates a folder called "venv" — this is your isolated environment</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>Now <strong>activate</strong> the virtual environment:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="comment"># On Windows:</span>
+<span class="cmd">venv\Scripts\activate</span>
+
+<span class="comment"># On Mac/Linux:</span>
+<span class="cmd">source venv/bin/activate</span>
+
+<span class="comment"># You'll know it worked when you see (venv) at the start of the line!</span>
+<span class="comment"># Example: (venv) C:\Users\YourName\Documents\hermes-agent></span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <div class="box warn">
+        <span class="box-icon">⚠️</span>
+        <div><strong>Remember:</strong> Every time you open a new terminal session, you need to activate the virtual environment again with <code>venv\Scripts\activate</code>. Look for the <code>(venv)</code> prefix!</div>
+      </div>
+    </div>
+
+    <!-- STEP 6 -->
+    <div class="step">
+      <div class="step-number">STEP 06</div>
+      <h3>📦 Install Required Python Libraries</h3>
+      <p><strong>What are we doing?</strong> Installing the Python packages (libraries) that our Hermes Agent needs to function — like installing function blocks in a PLC.</p>
+      <p>Make sure your virtual environment is active (you see <code>(venv)</code>), then run:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="cmd">pip install langchain langchain-community ollama requests python-dotenv</span>
+<span class="comment"># langchain = the agent framework (the "brain orchestrator")</span>
+<span class="comment"># ollama = connects Python to our local Ollama AI</span>
+<span class="comment"># requests = lets the agent browse web / call APIs</span>
+<span class="comment"># python-dotenv = safely stores secret settings (like API keys)</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>Wait for installation to complete. You'll see many lines scroll by — this is normal! ✅</p>
+    </div>
+
+    <!-- STEP 7 -->
+    <div class="step">
+      <div class="step-number">STEP 07</div>
+      <h3>🔐 Create Your Configuration File (.env)</h3>
+      <p><strong>What are we doing?</strong> Creating a secure settings file that stores configuration values — like a config.ini in SCADA.</p>
+      <p><strong>Why?</strong> We never hardcode secrets directly in code. If you share your code later, this file stays private.</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>In VS Code, click <strong>New File</strong> (the icon at the top of the file panel)</li>
+        <li>Name it exactly: <code>.env</code> (yes, starting with a dot!)</li>
+        <li>Paste the following content into it:</li>
+      </ol>
+      <div class="code-wrap">
+        <div class="code-block" data-lang=".env">
+<span class="comment"># ── Hermes Agent Configuration ──────────────────────</span>
+<span class="var">OLLAMA_MODEL</span>=<span class="str">hermes3</span>
+<span class="var">OLLAMA_BASE_URL</span>=<span class="str">http://localhost:11434</span>
+<span class="var">AGENT_NAME</span>=<span class="str">HermesAgent</span>
+<span class="var">MAX_ITERATIONS</span>=<span class="str">10</span>
+<span class="comment"># Add your API keys here if needed in future:</span>
+<span class="comment"># OPENAI_API_KEY=your_key_here</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>Save the file with <strong>Ctrl+S</strong> (or Cmd+S on Mac).</p>
+      <div class="box warn">
+        <span class="box-icon">⚠️</span>
+        <div>Never share your <code>.env</code> file with anyone or upload it to GitHub! It will contain sensitive API keys in the future.</div>
+      </div>
+    </div>
+
+    <!-- STEP 8 -->
+    <div class="step">
+      <div class="step-number">STEP 08</div>
+      <h3>🤖 Write Your First Hermes Agent!</h3>
+      <p><strong>What are we doing?</strong> Writing the core Python code for our Hermes Agent. This is the exciting part!</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>In VS Code, create a new file called <code>hermes_agent.py</code></li>
+        <li>Copy and paste the complete code below into it:</li>
+      </ol>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="python">
+<span class="comment"># ═══════════════════════════════════════════════════════════
+#  HERMES AGENT  — Your Local AI Assistant
+#  Powered by: LangChain + Ollama + Hermes 3
+# ═══════════════════════════════════════════════════════════</span>
+
+<span class="kw">import</span> os
+<span class="kw">import</span> datetime
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+<span class="kw">from</span> langchain_community.llms <span class="kw">import</span> Ollama
+<span class="kw">from</span> langchain.agents <span class="kw">import</span> AgentExecutor, create_react_agent
+<span class="kw">from</span> langchain.tools <span class="kw">import</span> Tool
+<span class="kw">from</span> langchain.prompts <span class="kw">import</span> PromptTemplate
+
+<span class="comment"># ── Load settings from .env file ──────────────────────────</span>
+load_dotenv()
+
+MODEL_NAME = os.getenv(<span class="str">"OLLAMA_MODEL"</span>, <span class="str">"hermes3"</span>)
+BASE_URL   = os.getenv(<span class="str">"OLLAMA_BASE_URL"</span>, <span class="str">"http://localhost:11434"</span>)
+AGENT_NAME = os.getenv(<span class="str">"AGENT_NAME"</span>, <span class="str">"HermesAgent"</span>)
+
+<span class="comment"># ── Connect to our local Hermes 3 AI ──────────────────────</span>
+llm = Ollama(model=MODEL_NAME, base_url=BASE_URL)
+
+<span class="comment"># ═══════════════════════════════════════════════════════════
+#  TOOLS — What the agent CAN DO
+#  Each tool is like a function block in PLC programming
+# ═══════════════════════════════════════════════════════════</span>
+
+<span class="kw">def</span> get_current_time(input: str = <span class="str">""</span>) -> str:
+    <span class="str">"""Returns the current date and time."""</span>
+    now = datetime.datetime.now()
+    <span class="kw">return</span> f<span class="str">"Current date and time: {now.strftime('%Y-%m-%d %H:%M:%S')}"</span>
+
+<span class="kw">def</span> simple_calculator(expression: str) -> str:
+    <span class="str">"""Evaluates a math expression. Example: '2 + 2 * 10'"""</span>
+    <span class="kw">try</span>:
+        result = eval(expression)
+        <span class="kw">return</span> f<span class="str">"Result of '{expression}' = {result}"</span>
+    <span class="kw">except Exception as</span> e:
+        <span class="kw">return</span> f<span class="str">"Calculator error: {str(e)}"</span>
+
+<span class="kw">def</span> read_text_file(filename: str) -> str:
+    <span class="str">"""Reads content from a text file in the current folder."""</span>
+    <span class="kw">try</span>:
+        <span class="kw">with</span> open(filename.strip(), <span class="str">'r'</span>) <span class="kw">as</span> f:
+            content = f.read()
+        <span class="kw">return</span> f<span class="str">"File contents:\n{content}"</span>
+    <span class="kw">except FileNotFoundError</span>:
+        <span class="kw">return</span> f<span class="str">"File '{filename}' not found."</span>
+
+<span class="kw">def</span> save_to_file(content: str) -> str:
+    <span class="str">"""Saves text to a file. Format: 'filename.txt|||Your content here'"""</span>
+    <span class="kw">try</span>:
+        parts = content.split(<span class="str">"|||"</span>)
+        filename = parts[0].strip()
+        text = parts[1].strip() <span class="kw">if</span> len(parts) > 1 <span class="kw">else</span> content
+        <span class="kw">with</span> open(filename, <span class="str">'w'</span>) <span class="kw">as</span> f:
+            f.write(text)
+        <span class="kw">return</span> f<span class="str">"✅ Successfully saved to '{filename}'"</span>
+    <span class="kw">except Exception as</span> e:
+        <span class="kw">return</span> f<span class="str">"Save error: {str(e)}"</span>
+
+<span class="comment"># ── Register Tools ─────────────────────────────────────────</span>
+tools = [
+    Tool(name=<span class="str">"GetCurrentTime"</span>, func=get_current_time,
+         description=<span class="str">"Get the current date and time"</span>),
+    Tool(name=<span class="str">"Calculator"</span>, func=simple_calculator,
+         description=<span class="str">"Calculate math expressions. Input: math expression like '100 * 1.1'"</span>),
+    Tool(name=<span class="str">"ReadFile"</span>, func=read_text_file,
+         description=<span class="str">"Read a text file. Input: filename like 'data.txt'"</span>),
+    Tool(name=<span class="str">"SaveFile"</span>, func=save_to_file,
+         description=<span class="str">"Save text to file. Input: 'filename.txt|||content to save'"</span>),
+]
+
+<span class="comment"># ── Agent Prompt Template ──────────────────────────────────</span>
+prompt = PromptTemplate.from_template(<span class="str">"""
+You are {agent_name}, a helpful and precise AI assistant.
+You have access to tools to help complete tasks.
+
+Tools available:
+{tools}
+
+Use this format EXACTLY:
+Thought: Think about what to do
+Action: tool_name
+Action Input: the input for the tool
+Observation: [result from tool]
+... (repeat as needed)
+Thought: I now have the final answer
+Final Answer: [your complete answer]
+
+Tool names: {tool_names}
+
+Question: {input}
+{agent_scratchpad}
+"""</span>)
+
+<span class="comment"># ── Build the Agent ────────────────────────────────────────</span>
+agent = create_react_agent(llm=llm, tools=tools, prompt=prompt)
+agent_executor = AgentExecutor(
+    agent=agent, tools=tools,
+    verbose=<span class="kw">True</span>,
+    max_iterations=<span class="kw">int</span>(os.getenv(<span class="str">"MAX_ITERATIONS"</span>, 10)),
+    handle_parsing_errors=<span class="kw">True</span>
+)
+
+<span class="comment"># ═══════════════════════════════════════════════════════════
+#  MAIN LOOP — Talk to your Hermes Agent!
+# ═══════════════════════════════════════════════════════════</span>
+<span class="kw">def</span> main():
+    print(<span class="str">f"\n{'='*55}"</span>)
+    print(<span class="str">f"  🪄  {AGENT_NAME} is Online"</span>)
+    print(<span class="str">f"  Model: {MODEL_NAME}   Base: {BASE_URL}"</span>)
+    print(<span class="str">f"{'='*55}"</span>)
+    print(<span class="str">"  Type your task and press Enter."</span>)
+    print(<span class="str">"  Type 'quit' or 'exit' to stop.\n"</span>)
+
+    <span class="kw">while True</span>:
+        user_input = input(<span class="str">"You 👤: "</span>).strip()
+        <span class="kw">if not</span> user_input:
+            <span class="kw">continue</span>
+        <span class="kw">if</span> user_input.lower() <span class="kw">in</span> [<span class="str">'quit'</span>, <span class="str">'exit'</span>, <span class="str">'q'</span>]:
+            print(<span class="str">"\n👋 Hermes Agent shutting down. Goodbye!\n"</span>)
+            <span class="kw">break</span>
+        <span class="kw">try</span>:
+            response = agent_executor.invoke({
+                <span class="str">"input"</span>: user_input,
+                <span class="str">"agent_name"</span>: AGENT_NAME
+            })
+            print(<span class="str">f"\n🤖 Hermes: {response['output']}\n"</span>)
+        <span class="kw">except Exception as</span> e:
+            print(<span class="str">f"\n❌ Error: {e}\n"</span>)
+
+<span class="kw">if</span> __name__ == <span class="str">"__main__"</span>:
+    main()
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>Save the file with <strong>Ctrl+S</strong>.</p>
+    </div>
+
+    <!-- STEP 9 -->
+    <div class="step">
+      <div class="step-number">STEP 09</div>
+      <h3>▶️ Run Your Hermes Agent!</h3>
+      <p><strong>What are we doing?</strong> Starting the agent for the first time — the moment of truth! 🎉</p>
+      <p>Make sure Ollama is running (llama icon in system tray), then in your VS Code terminal:</p>
+      <div class="code-wrap">
+        <div class="code-block" data-lang="terminal">
+<span class="comment"># Make sure venv is active first!</span>
+<span class="cmd">python hermes_agent.py</span>
+        </div>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+      </div>
+      <p>You should see:</p>
+      <div class="code-block" data-lang="output">
+=======================================================
+  🪄  HermesAgent is Online
+  Model: hermes3   Base: http://localhost:11434
+=======================================================
+  Type your task and press Enter.
+  Type 'quit' or 'exit' to stop.
+
+You 👤: _
+      </div>
+      <p>Now try asking it things! For example:</p>
+      <div class="code-block" data-lang="examples">
+You 👤: What time is it right now?
+You 👤: Calculate 480 * 0.85 for me
+You 👤: Save a note to report.txt with the text "Pump A checked OK"
+You 👤: What is the square root of 1444?
+      </div>
+      <div class="box success">
+        <span class="box-icon">🎉</span>
+        <div><strong>CONGRATULATIONS!</strong> You have successfully built and launched your very own Hermes Agent! You're now officially an AI engineer too! 🏆</div>
+      </div>
+    </div>
+
+    <!-- STEP 10 -->
+    <div class="step">
+      <div class="step-number">STEP 10</div>
+      <h3>🔁 How to Start the Agent Every Time</h3>
+      <p>Every time you want to use your Hermes Agent, follow this quick checklist:</p>
+      <ol style="padding-left:22px; margin:16px 0;">
+        <li>✅ Make sure Ollama is running (check for llama 🦙 in system tray — if not, open Ollama app)</li>
+        <li>✅ Open VS Code → Open your <code>hermes-agent</code> folder</li>
+        <li>✅ Open Terminal → type <code>venv\Scripts\activate</code></li>
+        <li>✅ Type <code>python hermes_agent.py</code></li>
+        <li>✅ Start chatting! 🚀</li>
+      </ol>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 4 — FEATURES TO ADD                -->
+<!-- ─────────────────────────────────────────── -->
+<section id="features" class="section">
+  <div class="container">
+    <div class="section-label">Section 04</div>
+    <h2>Cool Features You Can Add Later ✨</h2>
+    <p>Your basic Hermes Agent is running! Now let's explore the powerful things you can add to make it even more useful — especially for SCADA and industrial automation work.</p>
+
+    <div class="features-grid">
+
+      <div class="feature-card">
+        <span class="fi">🌐</span>
+        <h4>Web Search Tool</h4>
+        <p>Let the agent search the internet in real-time. Ask it to "find the latest firmware for Allen Bradley PLCs" and it will search and summarize results.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install duckduckgo-search</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">📧</span>
+        <h4>Email Integration</h4>
+        <p>Automatically send alarm notification emails. Connect to Gmail or Outlook and have Hermes draft and send shift reports to your team.</p>
+        <div style="margin-top:12px">
+          <span class="tag">smtplib (built-in)</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">📊</span>
+        <h4>Excel / CSV Report Generator</h4>
+        <p>Have the agent read your SCADA data exports and auto-generate formatted Excel reports with trends, summaries, and flagged anomalies.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install openpyxl pandas</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">🗄️</span>
+        <h4>Database Query Tool</h4>
+        <p>Connect to SQL databases (SQL Server, MySQL, SQLite) and let the agent run queries, extract historian data, and answer questions about your process data.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install sqlalchemy</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">🔌</span>
+        <h4>OPC-UA / Modbus Connector</h4>
+        <p>Connect directly to your PLC or DCS via OPC-UA or Modbus TCP. The agent can read real-time tag values and answer "Is Tank 3 above 80%?" instantly.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install opcua pymodbus</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">🧠</span>
+        <h4>Long-Term Memory (RAG)</h4>
+        <p>Give the agent memory of your P&IDs, equipment manuals, and SOPs. Ask "What is the interlock logic for P-101?" and it finds the answer in your documents.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install chromadb</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">📱</span>
+        <h4>Web Interface (GUI)</h4>
+        <p>Add a browser-based chat interface so any team member can use Hermes from their workstation without touching the terminal.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install gradio</span>
+        </div>
+      </div>
+
+      <div class="feature-card">
+        <span class="fi">⏰</span>
+        <h4>Scheduled Tasks</h4>
+        <p>Set up Hermes to automatically run tasks at specific times — like generating daily reports at 6:00 AM every morning without any manual trigger.</p>
+        <div style="margin-top:12px">
+          <span class="tag">pip install apscheduler</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="box info">
+      <span class="box-icon">📖</span>
+      <div><strong>Quick Example — Add Web Search:</strong> Install the library with <code>pip install duckduckgo-search</code>, then add a new tool function that calls <code>DDGS().text(query)</code> and register it in your tools list. The agent will now automatically use web search when needed!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────── -->
+<!-- SECTION 5 — TROUBLESHOOTING                -->
+<!-- ─────────────────────────────────────────── -->
+<section id="troubleshoot" class="section">
+  <div class="container">
+    <div class="section-label">Section 05</div>
+    <h2>Troubleshooting Common Problems 🔧</h2>
+    <p>Something not working? Don't panic! Every engineer troubleshoots. Click each problem below to see the fix.</p>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;"python is not recognized as an internal or external command"</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> Python was installed without adding it to PATH.<br><br>
+        <strong>Fix:</strong>
+        <ol style="padding-left:22px; margin:10px 0;">
+          <li>Uninstall Python from Windows Settings → Apps</li>
+          <li>Re-download Python from python.org</li>
+          <li>Run the installer again</li>
+          <li><strong>This time, CHECK "Add Python to PATH"</strong> on the first screen before clicking anything else!</li>
+          <li>Complete the installation and try again</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;"ConnectionRefusedError" or "Cannot connect to Ollama"</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> Ollama is not running in the background.<br><br>
+        <strong>Fix:</strong>
+        <ol style="padding-left:22px; margin:10px 0;">
+          <li>Check your system tray (bottom-right icons near the clock) for the 🦙 Ollama icon</li>
+          <li>If not there, open the Ollama application from your Start Menu</li>
+          <li>Wait 10 seconds for it to start up</li>
+          <li>Try running your agent again</li>
+          <li>If still failing, open Command Prompt and type <code>ollama serve</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;"ModuleNotFoundError: No module named 'langchain'"</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> Either the virtual environment is not activated, or the pip install failed.<br><br>
+        <strong>Fix:</strong>
+        <ol style="padding-left:22px; margin:10px 0;">
+          <li>Check for <code>(venv)</code> at the start of your terminal line. If missing, activate it: <code>venv\Scripts\activate</code></li>
+          <li>Then reinstall: <code>pip install langchain langchain-community ollama requests python-dotenv</code></li>
+          <li>Run your script again</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;Hermes 3 gives very slow or incorrect responses</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> Your computer may not have enough RAM, or the model is overloaded. Hermes 3 works best with 16GB+ RAM.<br><br>
+        <strong>Fix Options:</strong>
+        <ul style="padding-left:22px; margin:10px 0;">
+          <li>Close other heavy applications (browser tabs, other software) while running the agent</li>
+          <li>Try a smaller model: <code>ollama pull hermes3:3b</code> (smaller but faster version)</li>
+          <li>Or try: <code>ollama pull mistral</code> as a lighter alternative</li>
+          <li>In your <code>.env</code> file, change <code>OLLAMA_MODEL=hermes3</code> to <code>OLLAMA_MODEL=hermes3:3b</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;Agent keeps looping and never gives a Final Answer</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> The agent is confused about how to format its response, or the task is too complex.<br><br>
+        <strong>Fix:</strong>
+        <ol style="padding-left:22px; margin:10px 0;">
+          <li>Press <code>Ctrl+C</code> to stop the loop</li>
+          <li>Try rephrasing your question more simply and clearly</li>
+          <li>Break complex tasks into smaller steps</li>
+          <li>In your <code>.env</code> file, reduce <code>MAX_ITERATIONS=5</code> to force it to stop sooner</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;pip install fails with "Permission denied" or network errors</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause A (Permission):</strong> Run VS Code or Command Prompt as Administrator (right-click → "Run as administrator").<br><br>
+        <strong>Cause B (Corporate Network/Firewall):</strong> Your company firewall may block pip. Try:
+        <div class="code-block" data-lang="terminal" style="margin:10px 0">
+<span class="cmd">pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org langchain</span>
+        </div>
+        Or contact your IT department and ask them to whitelist <code>pypi.org</code> and <code>files.pythonhosted.org</code>.
+      </div>
+    </div>
+
+    <div class="trouble-item">
+      <div class="trouble-q" onclick="toggleTrouble(this)">
+        <span><span class="tq-icon">🔴</span> &nbsp;"hermes3 model not found" when running Ollama</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="trouble-a">
+        <strong>Cause:</strong> The model hasn't been downloaded yet, or the download failed.<br><br>
+        <strong>Fix:</strong>
+        <ol style="padding-left:22px; margin:10px 0;">
+          <li>Make sure Ollama is running (🦙 in system tray)</li>
+          <li>Open Command Prompt and type: <code>ollama pull hermes3</code></li>
+          <li>Wait for the full download to complete (progress bar should reach 100%)</li>
+          <li>Verify it downloaded: <code>ollama list</code> — you should see hermes3 in the list</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="box tip">
+      <span class="box-icon">💡</span>
+      <div><strong>General Rule:</strong> When in doubt, restart everything — close VS Code, stop Ollama, reopen VS Code, restart Ollama, activate your venv, and try again. Fixes 80% of issues! Classic engineering: turn it off and back on again. 😄</div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>🪄 Hermes Agent Beginner's Guide &nbsp;·&nbsp; Built with patience and ☕ &nbsp;·&nbsp; You did it! 🎉</p>
+  <p style="margin-top:8px; color: #3a4055;">Keep learning, keep building. Every expert was once a beginner.</p>
+</footer>
+
+<script>
+  // ── Progress bar ──────────────────────────────
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrollTop = doc.scrollTop || document.body.scrollTop;
+    const scrollHeight = doc.scrollHeight - doc.clientHeight;
+    const pct = (scrollTop / scrollHeight) * 100;
+    document.getElementById('progressBar').style.width = pct + '%';
+  });
+
+  // ── Trouble toggles ───────────────────────────
+  function toggleTrouble(el) {
+    const item = el.closest('.trouble-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.trouble-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // ── Copy buttons ──────────────────────────────
+  function copyCode(btn) {
+    const codeBlock = btn.previousElementSibling;
+    const text = codeBlock.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ copied';
+      setTimeout(() => btn.textContent = 'copy', 2000);
+    }).catch(() => {
+      btn.textContent = 'select text manually';
+    });
+  }
+</script>
+
+</body>
+</html>
